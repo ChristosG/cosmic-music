@@ -15,9 +15,33 @@ android {
         applicationId = "app.cosmic.player"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        // versionCode is driven by CI (github.run_number) so every published
+        // build is monotonically higher and Android always accepts the update.
+        versionCode = System.getenv("VERSION_CODE")?.toIntOrNull() ?: 1
+        versionName = System.getenv("VERSION_NAME") ?: "0.1.0"
         vectorDrawables { useSupportLibrary = true }
+    }
+
+    signingConfigs {
+        // The published APK is signed with the same key that signed the early
+        // sideload installs (the machine's Android debug key), so GitHub builds
+        // install as in-place UPDATES over existing installs — preserving the
+        // Room DB (playlists, history) and DataStore prefs. CI injects the key
+        // via env from GitHub Secrets; local builds fall back to ~/.android.
+        create("release") {
+            val ksPath = System.getenv("KEYSTORE_FILE")
+            if (ksPath != null && file(ksPath).exists()) {
+                storeFile = file(ksPath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            } else {
+                storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
     }
 
     buildTypes {
@@ -25,7 +49,11 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("debug") // sideload-only; replace with real keystore later
+            // Match the existing on-device applicationId (app.cosmic.player.debug)
+            // so the published build updates it in place instead of installing
+            // as a separate app. NOT debuggable — this is a real release build.
+            applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             applicationIdSuffix = ".debug"
