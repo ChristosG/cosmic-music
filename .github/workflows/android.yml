@@ -1,0 +1,63 @@
+name: Build APK
+
+# Builds an installable APK on every push, and publishes it as a downloadable
+# GitHub Release whenever you push a version tag (e.g. `git tag v0.1.0 && git push --tags`).
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:   # lets you trigger a build manually from the Actions tab
+
+permissions:
+  contents: write       # needed so the job can create a Release on tags
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Build release APK
+        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Locate APK
+        id: apk
+        run: echo "path=$(find app/build/outputs/apk/release -name '*.apk' | head -n1)" >> "$GITHUB_OUTPUT"
+
+      # Always make the APK downloadable from the workflow run page.
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cosmic-release-apk
+          path: ${{ steps.apk.outputs.path }}
+          if-no-files-found: error
+
+      # On a version tag, publish a Release so anyone can grab the APK from the
+      # repo's Releases page without a GitHub account.
+      - name: Publish Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.apk.outputs.path }}
+          generate_release_notes: true

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_tab">Library</string>
+    <string name="songs_tab">Songs</string>
+    <string name="permission_audio_title">Music access needed</string>
+    <string name="permission_audio_body">Cosmic needs permission to read audio files so it can show your library.</string>
+    <string name="permission_audio_grant">Grant access</string>
+    <string name="empty_library_title">No music yet</string>
+    <string name="empty_library_body">Drop files into Music/Cosmic/ or use the downloads tab.</string>
+    <string name="rescan">Rescan</string>
+</resources>

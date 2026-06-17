@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="now_playing">Now playing</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="next">Next track</string>
+    <string name="previous">Previous track</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="repeat">Repeat</string>
+    <string name="collapse">Collapse</string>
+    <string name="album_art">Album art</string>
+    <string name="nothing_playing">Nothing playing</string>
+</resources>

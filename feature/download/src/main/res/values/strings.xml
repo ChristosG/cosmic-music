@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="downloads_title">Downloads</string>
+    <string name="paste_url_hint">Paste audio URL or YouTube link…</string>
+    <string name="add_to_queue">Download</string>
+    <string name="queue_empty_title">Nothing in the queue</string>
+    <string name="queue_empty_body">Paste a direct audio URL above. YouTube/SoundCloud/Bandcamp support is coming next.</string>
+    <string name="dl_status_queued">Queued</string>
+    <string name="dl_status_running">Downloading</string>
+    <string name="dl_status_completed">Done</string>
+    <string name="dl_status_failed">Failed</string>
+    <string name="dl_status_canceled">Canceled</string>
+    <string name="dl_action_cancel">Cancel</string>
+    <string name="dl_action_retry">Retry</string>
+    <string name="dl_action_delete">Remove</string>
+</resources>
